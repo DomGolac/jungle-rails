@@ -2,13 +2,12 @@ class OrdersController < ApplicationController
 
   def show
     @order = Order.find(params[:id])
-    @line_items = LineItem.where order_id: @order.id
     @items = []
-    @line_items.each do |line_item|
+    line_items = LineItem.where order_id: @order.id
+    line_items.each do |line_item|
       product = Product.find(line_item.product_id)
       @items.push(product)
     end
-
   end
 
   def create
@@ -18,6 +17,7 @@ class OrdersController < ApplicationController
     if order.valid?
       empty_cart!
       redirect_to order, notice: 'Your Order has been placed.'
+      # send_email(order)
     else
       redirect_to cart_path, error: order.errors.full_messages.first
     end
@@ -61,6 +61,7 @@ class OrdersController < ApplicationController
     end
     order.save!
     order
+
   end
 
   # returns total in cents not dollars (stripe uses cents as well)
@@ -72,6 +73,11 @@ class OrdersController < ApplicationController
       end
     end
     total
+  end
+
+  def send_email(order)
+    @order = order
+    Mailer.order_receipt(@order).deliver_later
   end
 
 end
