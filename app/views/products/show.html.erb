@@ -24,7 +24,7 @@
           <dd><%= @product.price %></dd>
         </dl>
       </div>
-      <div>
+      <div class='col-sm-8'>
         <h2>Reviews:</h2>
         <% if current_user %>
           <%= form_for @product, :url => product_reviews_path(@product), method: 'post' do |f| %>
@@ -37,13 +37,13 @@
           <% end %>
         <% end %>
       </div>
-      <div>
+      <div class='col-sm-8'>
         <% @reviews.each do |review| %>
-          <pre><%= review.description %><br><%= review.rating %>/5
+          <div class='product-rating'><%= review.description %><br><%= review.rating %>/5<br>
             <% if current_user && current_user.id == review.user_id %>
               <span><%= link_to 'delete', product_review_path(product_id: @product.id, id: review.id), method: 'delete' %></span>
             <% end %>
-          </pre>
+          </div>
         <% end %>
       </div>
     </div>
