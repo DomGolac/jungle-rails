@@ -24,6 +24,28 @@
           <dd><%= @product.price %></dd>
         </dl>
       </div>
+      <div>
+        <h2>Reviews:</h2>
+        <% if current_user %>
+          <%= form_for @product, :url => product_reviews_path(@product), method: 'post' do |f| %>
+            <%= f.fields_for :reviews do |review| %>
+              <%= review.label :description %>
+              <%= review.text_area :description %>
+              <%= review.label :rating %> <%= review.select :rating, [1, 2, 3, 4, 5] %>
+            <% end %>
+            <%= f.submit 'Submit' %>
+          <% end %>
+        <% end %>
+      </div>
+      <div>
+        <% @reviews.each do |review| %>
+          <pre><%= review.description %><br><%= review.rating %>/5
+            <% if current_user && current_user.id == review.user_id %>
+              <span><%= link_to 'delete', product_review_path(product_id: @product.id, id: review.id), method: 'delete' %></span>
+            <% end %>
+          </pre>
+        <% end %>
+      </div>
     </div>
 
   </article>
